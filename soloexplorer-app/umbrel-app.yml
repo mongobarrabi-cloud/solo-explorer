@@ -1,0 +1,18 @@
+manifestVersion: 1.1
+id: soloexplorer-app
+category: finance
+name: Solo Explorer
+version: "1.0.0"
+tagline: Panel estilo LetsMine.it para tu nodo local
+description: >-
+  Explorador visual en tiempo real de bloques candidatos, recompensa Coinbase y mejores shares enviados a AxeBTC y AxeBCH.
+developer: mongobarrabi-cloud
+website: https://github.com
+dependencies: []
+repo: https://github.com
+support: https://github.com
+port: 8088
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
