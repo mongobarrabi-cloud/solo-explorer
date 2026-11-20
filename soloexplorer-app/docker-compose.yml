@@ -1,11 +1,9 @@
+
 version: "3.7"
 
 services:
-  app_proxy:
-    environment:
-      APP_HOST: web
-      APP_PORT: 80
-
   web:
     image: ghcr.io/mongobarrabi-cloud/solo-explorer:latest
+    ports:
+      - "8080:80"
     restart: unless-stopped
