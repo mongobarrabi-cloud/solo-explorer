@@ -1,13 +1,15 @@
+
 version: "3.7"
 
 services:
   app_proxy:
     environment:
       APP_HOST: soloexplorer-app_web_1
-      APP_PORT: 80
+      APP_PORT: 8088
 
   web:
-    image: nginx:alpine
+    image: python:3.11-alpine
     restart: on-failure
+    working_dir: /app
     command: >
-      sh -c "wget -qO /usr/share/nginx/html/index.html https://githubusercontent.com && nginx -g 'daemon off;'"
+      sh -c "wget -O index.html https://githubusercontent.com && python3 -m http.server 8088"
