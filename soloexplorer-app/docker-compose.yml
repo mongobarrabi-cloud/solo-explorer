@@ -8,7 +8,4 @@ services:
 
   web:
     image: ghcr.io/mongobarrabi-cloud/solo-explorer:latest
-    ports:
-      - "8088:80"
     restart: unless-stopped
-
