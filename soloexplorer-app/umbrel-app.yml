@@ -1,11 +1,19 @@
-version: "3.7"
 
-services:
-  app_proxy:
-    environment:
-      APP_HOST: soloexplorer-app_web_1
-      APP_PORT: 80
-
-  web:
-    image: ghcr.io/mongobarrabi-cloud/solo-explorer:latest
-    restart: unless-stopped
+manifestVersion: 1
+id: soloexplorer-app
+category: mining
+name: Solo Explorer
+version: "1.0.0"
+tagline: Explorador local para AxeBTC y AxeBCH
+description: >-
+  Interfaz web local para monitorizar estadísticas en tiempo real de tus pools AxeBTC y AxeBCH en StratumOS.
+developer: mongobarrabi-cloud
+website: https://github.com
+dependencies: []
+repo: https://github.com
+support: https://github.com/issues
+port: 8088
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
