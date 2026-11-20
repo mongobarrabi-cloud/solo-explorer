@@ -127,12 +127,19 @@
   </div>
 
   <script>
-    const NODE_IP = window.location.protocol.startsWith('http') ? window.location.origin : 'http://192.168.0.97';
-    document.getElementById('host-label').textContent = window.location.hostname || '192.168.0.97';
+    const HOST = window.location.hostname || '192.168.0.97';
+    document.getElementById('host-label').textContent = HOST;
+
+    const POOLS = {
+      axebtc: { port: 7890, coin: 'BTC', reward: '3.125 BTC' },
+      axebch: { port: 4567, coin: 'BCH', reward: '3.125 BCH' }
+    };
+
     let currentApp = 'axebtc';
 
     function formatNumber(num) {
       if (num === null || num === undefined || isNaN(num)) return '—';
+      if (num >= 1e15) return (num / 1e15).toFixed(2) + ' P';
       if (num >= 1e12) return (num / 1e12).toFixed(2) + ' T';
       if (num >= 1e9) return (num / 1e9).toFixed(2) + ' G';
       if (num >= 1e6) return (num / 1e6).toFixed(2) + ' M';
@@ -140,8 +147,19 @@
       return Number(num).toLocaleString('es-ES');
     }
 
-    function formatAgo(seconds) {
-      if (seconds === null || seconds === undefined) return '—';
+    function formatHashrate(hs) {
+      if (!hs || isNaN(hs)) return '0.00 H/s';
+      if (hs >= 1e15) return (hs / 1e15).toFixed(2) + ' PH/s';
+      if (hs >= 1e12) return (hs / 1e12).toFixed(2) + ' TH/s';
+      if (hs >= 1e9) return (hs / 1e9).toFixed(2) + ' GH/s';
+      if (hs >= 1e6) return (hs / 1e6).toFixed(2) + ' MH/s';
+      return Number(hs).toFixed(2) + ' H/s';
+    }
+
+    function formatAgo(timestamp) {
+      if (!timestamp) return '—';
+      const now = Math.floor(Date.now() / 1000);
+      const seconds = timestamp > 1e9 ? Math.max(0, now - timestamp) : timestamp;
       if (seconds < 60) return `hace ${seconds}s`;
       if (seconds < 3600) return `hace ${Math.floor(seconds / 60)}m ${seconds % 60}s`;
       return `hace ${Math.floor(seconds / 3600)}h`;
@@ -151,35 +169,35 @@
       currentApp = app;
       document.getElementById('btn-btc').className = app === 'axebtc' ? 'tab-active' : 'tab-inactive';
       document.getElementById('btn-bch').className = app === 'axebch' ? 'tab-active' : 'tab-inactive';
-      document.getElementById('block-reward').textContent = app === 'axebtc' ? '3.125 BTC' : '3.125 BCH';
-      fetchData();
+      document.getElementById('block-reward').textContent = POOLS[app].reward;
+      fetchStats();
     }
 
-    async function fetchData() {
-      const base = `${NODE_IP}/apps/${currentApp}/api`;
+    async function fetchStats() {
+      const cfg = POOLS[currentApp];
+      const baseUrl = `http://${HOST}:${cfg.port}`;
       const badge = document.getElementById('status-badge');
+
       try {
-        const [poolRes, workersRes, nodeRes] = await Promise.all([
-          fetch(`${base}/pool`),
-          fetch(`${base}/workers`),
-          fetch(`${base}/node`).catch(() => null)
-        ]);
-        const pool = await poolRes.json();
-        const workersData = await workersRes.json();
-        const node = nodeRes && nodeRes.ok ? await nodeRes.json() : {};
+        // Soporta API estándar JSON de AxeBTC/AxeBCH o CKPool (/api/stats o /pool/pool.status)
+        let data = null;
+        const endpoints = [`${baseUrl}/api/stats`, `${baseUrl}/stats`, `${baseUrl}/pool/pool.status`];
 
-        badge.textContent = '● En línea';
-        badge.className = 'badge badge-live';
+        for (const url of endpoints) {
+          try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (res.ok) {
+              const text = await res.text();
+              try {
+                data = JSON.parse(text);
+              } catch {
+                // CKPool devuelve líneas JSON separadas
+                const lines = text.trim().split('\n').map(l => JSON.parse(l));
+                data = Object.assign({}, ...lines);
+              }
+              if (data) break;
+            }
+          } catch (_) {}
+        }
 
-        const height = node.blocks || node.height || node.headers || pool.lastBlockHeight || 'Sincronizado';
-        document.getElementById('block-height').textContent = typeof height === 'number' ? `#${height.toLocaleString('es-ES')}` : height;
-        document.getElementById('net-diff').textContent = formatNumber(pool.networkDifficulty);
-        document.getElementById('total-shares').textContent = `Shares totales: ${(pool.shares || 0).toLocaleString('es-ES')}`;
-        document.getElementById('luck-pct').textContent = pool.luckPct ? `Esfuerzo actual: ${Number(pool.luckPct).toFixed(2)}%` : '';
-        document.getElementById('payout-box').textContent = pool.pool_settings?.payoutAddress || 'No configurada';
 
-        const workers = Array.isArray(workersData) ? workersData : (workersData.workers || []);
-        let sumHash = 0, maxEver = 0;
-        const tbody = document.getElementById('workers-table');
-
-        if (workers.length === 0) {
