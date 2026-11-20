@@ -9,3 +9,177 @@ services:
   web:
     image: nginx:alpine
     restart: unless-stopped
+    configs:
+      - source: explorer_html
+        target: /usr/share/nginx/html/index.html
+
+configs:
+  explorer_html:
+    content: |
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LetsMine Local — 5tratumOS Solo Node</title>
+        <style>
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body { background-color: #0b0e14; color: #e2e8f0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 24px; }
+          .container { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+          header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 1px solid #1e2433; padding-bottom: 18px; }
+          .brand { display: flex; align-items: center; gap: 12px; }
+          .logo { width: 42px; height: 42px; border-radius: 10px; background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.45); display: flex; align-items: center; justify-content: center; color: #fbbf24; font-weight: 800; font-size: 22px; }
+          h1 { font-size: 20px; font-weight: 700; color: #ffffff; }
+          h1 span { color: #fbbf24; }
+          .sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+          .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+          button { border: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+          .tab-active { background-color: #f59e0b; color: #0b0e14; font-weight: 700; }
+          .tab-inactive { background-color: #1e2433; color: #94a3b8; }
+          .tab-inactive:hover { background-color: #283044; color: #ffffff; }
+          .badge { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+          .badge-live { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); }
+          .badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+          .card { background-color: #131722; border: 1px solid #1e2433; border-radius: 12px; padding: 20px; }
+          .card-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px; }
+          .label-up { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; font-weight: 700; }
+          .height-pill { background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 3px 10px; border-radius: 6px; font-family: Consolas, monospace; font-weight: 700; font-size: 14px; margin-left: 8px; }
+          .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 18px; }
+          .stat-box { background-color: #0d111a; border: 1px solid #1e2433; border-radius: 10px; padding: 14px; }
+          .stat-title { font-size: 12px; color: #94a3b8; }
+          .stat-val { font-size: 20px; font-weight: 700; font-family: Consolas, monospace; margin-top: 6px; }
+          .c-green { color: #34d399; }
+          .c-white { color: #ffffff; }
+          .c-amber { color: #fbbf24; }
+          .c-sky { color: #38bdf8; }
+          .hex-box { background-color: #090c10; border: 1px solid #1e2433; border-radius: 8px; padding: 12px; font-family: Consolas, monospace; font-size: 12px; color: #fcd34d; word-break: break-all; margin-top: 6px; }
+          .table-card { padding: 0; overflow: hidden; }
+          .table-top { padding: 16px 20px; border-bottom: 1px solid #1e2433; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+          .table-wrap { overflow-x: auto; }
+          table { width: 100%; border-collapse: collapse; text-align: left; }
+          th { background-color: #0e121b; color: #94a3b8; font-size: 11px; text-transform: uppercase; padding: 12px 16px; border-bottom: 1px solid #1e2433; }
+          td { padding: 14px 16px; border-bottom: 1px solid rgba(30, 36, 51, 0.7); font-family: Consolas, monospace; font-size: 13px; }
+          tr:hover td { background-color: rgba(30, 41, 59, 0.35); }
+          .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+          .dot-on { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+          .dot-off { background-color: #475569; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <header>
+            <div class="brand">
+              <div class="logo">₿</div>
+              <div>
+                <h1>5tratumOS <span>Solo Explorer</span></h1>
+                <div class="sub">Nodo local: <strong style="color:#e2e8f0" id="host-label">192.168.0.97</strong></div>
+              </div>
+            </div>
+            <div class="controls">
+              <button id="btn-btc" onclick="switchPool('axebtc')" class="tab-active">AxeBTC (:7890)</button>
+              <button id="btn-bch" onclick="switchPool('axebch')" class="tab-inactive">AxeBCH (:4567)</button>
+              <span id="status-badge" class="badge badge-live">● Conectando...</span>
+            </div>
+          </header>
+
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <span class="label-up">Último Bloque Candidato</span>
+                <span id="block-height" class="height-pill">#—</span>
+              </div>
+              <div class="sub">Actualización cada 5s · <span id="last-update">—</span></div>
+            </div>
+
+            <div class="grid-4">
+              <div class="stat-box">
+                <div class="stat-title">Recompensa del Bloque</div>
+                <div id="block-reward" class="stat-val c-green">3.125 BTC</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-title">Dificultad de Red</div>
+                <div id="net-diff" class="stat-val c-white">—</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-title">Mejor Share (Récord)</div>
+                <div id="best-ever" class="stat-val c-amber">—</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-title">Hashrate Total Local</div>
+                <div id="total-hashrate" class="stat-val c-sky">— TH/s</div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="stat-title">Dirección de Recompensa (Coinbase Payout)</span>
+                <span id="luck-pct" class="sub">Esfuerzo: —</span>
+              </div>
+              <div id="payout-box" class="hex-box">Cargando dirección desde el nodo...</div>
+            </div>
+          </section>
+
+          <section class="card table-card">
+            <div class="table-top">
+              <span class="label-up" style="color:#e2e8f0">Trabajadores Activos y Mejores Envíos (Shares)</span>
+              <span id="total-shares" class="sub">Shares totales: —</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Usuario / Worker</th>
+                    <th>Hashrate Actual</th>
+                    <th>Dificultad Actual</th>
+                    <th>Mejor Share (Bloque)</th>
+                    <th>Récord Histórico</th>
+                    <th style="text-align:right">Último Envío</th>
+                  </tr>
+                </thead>
+                <tbody id="workers-table">
+                  <tr><td colspan="6" style="text-align:center; padding:28px; color:#64748b">Leyendo datos del nodo...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <script>
+          const NODE_IP = window.location.origin;
+          document.getElementById('host-label').textContent = window.location.hostname || '192.168.0.97';
+          let currentApp = 'axebtc';
+
+          function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return '—';
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + ' T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + ' G';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + ' M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + ' K';
+            return Number(num).toLocaleString('es-ES');
+          }
+
+          function formatAgo(seconds) {
+            if (seconds === null || seconds === undefined) return '—';
+            if (seconds < 60) return `hace ${seconds}s`;
+            if (seconds < 3600) return `hace ${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+            return `hace ${Math.floor(seconds / 3600)}h`;
+          }
+
+          function switchPool(app) {
+            currentApp = app;
+            document.getElementById('btn-btc').className = app === 'axebtc' ? 'tab-active' : 'tab-inactive';
+            document.getElementById('btn-bch').className = app === 'axebch' ? 'tab-active' : 'tab-inactive';
+            document.getElementById('block-reward').textContent = app === 'axebtc' ? '3.125 BTC' : '3.125 BCH';
+            fetchData();
+          }
+
+          async function fetchData() {
+            const base = `${NODE_IP}/apps/${currentApp}/api`;
+            const badge = document.getElementById('status-badge');
+            try {
+              const [poolRes, workersRes, nodeRes] = await Promise.all([
+                fetch(`${base}/pool`),
+                fetch(`${base}/workers`),
+                fetch(`${base}/node`).catch(() => null)
+              ]);
+              const pool = await poolRes.json();
