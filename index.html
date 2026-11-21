@@ -165,9 +165,13 @@
   </div>
 
   <script>
+    const ORIGIN = (() => {
+      try { return window.parent.location.origin; } catch (e) { return window.location.origin; }
+    })();
+
     const CONFIG = {
-      BTC: { name: 'BTC', base: '/apps/axebtc', reward: 3.125, price: 92000, tag: 'local-btc' },
-      BCH: { name: 'BCH', base: '/apps/axebch', reward: 3.125, price: 460, tag: 'local-bch' }
+      BTC: { name: 'BTC', app: 'axebtc', reward: 3.125, price: 92000, tag: 'local-btc' },
+      BCH: { name: 'BCH', app: 'axebch', reward: 3.125, price: 460, tag: 'local-bch' }
     };
 
     let currentCoin = 'BCH';
@@ -204,6 +208,3 @@
     }
 
     function makeHash(diff) {
-      const z = Math.min(16, Math.max(8, Math.floor(Math.log10(Math.max(10, diff)) * 1.3)));
-      const zStr = '0'.repeat(z).replace(/(.{4})/g, '$1 ').trim();
-      const hex = '0123456789abcdef';
