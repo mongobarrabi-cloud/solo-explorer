@@ -2,7 +2,7 @@ manifestVersion: 1
 id: soloexplorer-app
 category: mining
 name: Solo Explorer
-version: "1.0.1"
+version: "1.0.2"
 tagline: Explorador local para AxeBTC y AxeBCH
 description: >-
   Interfaz web local para monitorizar estadísticas en tiempo real de tus pools AxeBTC y AxeBCH en StratumOS.
