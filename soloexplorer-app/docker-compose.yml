@@ -7,5 +7,5 @@ services:
       APP_PORT: 80
 
   web:
-    image: ghcr.io/mongobarrabi-cloud/solo-explorer:latest
+    image: ghcr.io/mongobarrabi-cloud/solo-explorer:main
     restart: unless-stopped
