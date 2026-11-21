@@ -19,291 +19,71 @@
       --amber-dim: rgba(245, 158, 11, 0.15);
       --red: #ef4444;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-body);
+      background: var(--bg-body);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 13px;
-      line-height: 1.45;
       padding: 16px;
     }
-
-    .container {
-      max-width: 1180px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
+    .container { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
     .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--amber);
-      box-shadow: 0 0 8px var(--amber);
-    }
-    .status-dot.online {
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-    }
-
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .status-dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
     .wallet-badge {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: var(--bg-hex);
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
+      font-family: monospace; font-size: 12px; color: var(--text-muted);
+      background: var(--bg-hex); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);
     }
-
-    .coin-switch {
-      display: flex;
-      gap: 8px;
-    }
-
+    .coin-switch { display: flex; gap: 8px; }
     .coin-btn {
-      background: var(--bg-card-alt);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 7px 14px;
-      border-radius: 7px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      background: var(--bg-card-alt); color: var(--text-muted); border: 1px solid var(--border);
+      padding: 7px 14px; border-radius: 7px; font-weight: 600; cursor: pointer;
     }
-
-    .coin-btn.active {
-      background: var(--green-dim);
-      color: var(--green);
-      border-color: var(--green);
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      white-space: nowrap;
-    }
-
+    .coin-btn.active { background: var(--green-dim); color: var(--green); border-color: var(--green); }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
     th {
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card-alt);
+      color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase;
+      padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--bg-card-alt);
     }
-
-    td {
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      font-variant-numeric: tabular-nums;
-    }
-
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); }
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(255, 255, 255, 0.02); }
-
-    .worker-cell {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-    }
-
-    .dot-sm {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
+    .worker-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .dot-sm { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
     .dot-sm.idle { background: var(--amber); }
-
     .shares-bad { color: var(--red); }
-
-    .block-card {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .block-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
+    .block-card { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .block-header { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
     .badge-height {
-      background: var(--amber-dim);
-      color: var(--amber);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      font-family: ui-monospace, monospace;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 5px;
-      font-size: 12px;
+      background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.35);
+      font-family: monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; font-size: 12px;
     }
-
-    .reward-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    .reward-value {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-top: 2px;
-    }
-
-    .reward-fiat {
-      font-size: 14px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .block-meta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 14px;
-      padding-top: 4px;
-    }
-
-    .meta-item label {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .meta-item span {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
+    .reward-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); }
+    .reward-value { font-size: 28px; font-weight: 800; margin-top: 2px; }
+    .reward-fiat { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+    .block-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+    .meta-item label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+    .meta-item span { font-weight: 700; font-size: 14px; }
     .coinbase-box {
-      background: var(--bg-hex);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11.5px;
-      color: #cbd5e1;
-      word-break: break-all;
-      line-height: 1.55;
+      background: var(--bg-hex); border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+      font-family: monospace; font-size: 11.5px; color: #cbd5e1; word-break: break-all; line-height: 1.55;
     }
-
-    .coinbase-note {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .highlight-addr {
-      background: var(--amber-dim);
-      color: var(--amber);
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-
-    .tabs-bar {
-      display: flex;
-      gap: 18px;
-      padding: 12px 16px 0;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card-alt);
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 13px;
-      padding-bottom: 10px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab-btn.active {
-      color: var(--green);
-      border-bottom-color: var(--green);
-    }
-
-    .pill-diff {
-      background: var(--bg-card-alt);
-      border: 1px solid var(--border);
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-family: ui-monospace, monospace;
-      font-size: 12px;
-    }
-
-    .pill-diff.high {
-      background: var(--green-dim);
-      color: var(--green);
-      border-color: rgba(34, 197, 94, 0.35);
-    }
-
-    .hash-mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-    }
-
-    .hash-zeros {
-      color: var(--green);
-      font-weight: 700;
-    }
-
-    .sub-agent {
-      display: block;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .coinbase-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .highlight-addr { background: var(--amber-dim); color: var(--amber); padding: 1px 5px; border-radius: 4px; font-weight: 600; }
+    .tabs-bar { display: flex; gap: 18px; padding: 12px 16px 0; border-bottom: 1px solid var(--border); background: var(--bg-card-alt); }
+    .tab-btn { background: none; border: none; color: var(--text-muted); font-weight: 600; font-size: 13px; padding-bottom: 10px; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+    .pill-diff { background: var(--bg-card-alt); border: 1px solid var(--border); padding: 2px 8px; border-radius: 5px; font-family: monospace; font-size: 12px; }
+    .pill-diff.high { background: var(--green-dim); color: var(--green); border-color: rgba(34, 197, 94, 0.35); }
+    .hash-mono { font-family: monospace; font-size: 12px; }
+    .hash-zeros { color: var(--green); font-weight: 700; }
+    .sub-agent { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -315,8 +95,8 @@
         <span id="walletBadge" class="wallet-badge">Conectando con nodo local...</span>
       </div>
       <div class="coin-switch">
-        <button id="btnBtc" class="coin-btn" onclick="switchCoin('BTC')">AxeBTC (:7890)</button>
-        <button id="btnBch" class="coin-btn active" onclick="switchCoin('BCH')">AxeBCH (:4567)</button>
+        <button id="btnBtc" class="coin-btn" type="button">AxeBTC (:7890)</button>
+        <button id="btnBch" class="coin-btn active" type="button">AxeBCH (:4567)</button>
       </div>
     </div>
 
@@ -335,11 +115,7 @@
             </tr>
           </thead>
           <tbody id="workersBody">
-            <tr>
-              <td colspan="7" style="text-align:center; color: var(--text-muted); padding: 20px;">
-                Cargando trabajadores desde el nodo...
-              </td>
-            </tr>
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">Cargando trabajadores...</td></tr>
           </tbody>
         </table>
       </div>
@@ -350,45 +126,84 @@
         <span>⛏️ Último bloque enviado a tu minero:</span>
         <span id="blockHeightTop" class="badge-height">—</span>
       </div>
-
       <div>
         <div class="reward-label">Bloque de Recompensa</div>
         <div id="blockReward" class="reward-value">—</div>
         <div id="blockFiat" class="reward-fiat">~ $—</div>
       </div>
-
       <div class="block-meta-grid">
-        <div class="meta-item">
-          <label>Altura del Bloque</label>
-          <span id="blockHeightMid" class="badge-height">—</span>
-        </div>
-        <div class="meta-item">
-          <label>Dificultad de Red</label>
-          <span id="netDiff">—</span>
-        </div>
-        <div class="meta-item">
-          <label>Mejor Share (Pool)</label>
-          <span id="poolBestShare">—</span>
-        </div>
-        <div class="meta-item">
-          <label>Última Actividad</label>
-          <span id="lastActivity">—</span>
-        </div>
+        <div class="meta-item"><label>Altura del Bloque</label><span id="blockHeightMid" class="badge-height">—</span></div>
+        <div class="meta-item"><label>Dificultad de Red</label><span id="netDiff">—</span></div>
+        <div class="meta-item"><label>Mejor Share (Pool)</label><span id="poolBestShare">—</span></div>
+        <div class="meta-item"><label>Última Actividad</label><span id="lastActivity">—</span></div>
       </div>
-
       <div>
         <div class="reward-label" style="margin-bottom:6px;">Transacción de Coinbase (Plantilla Activa)</div>
-        <div id="coinbaseHex" class="coinbase-box">
-          02000000010000000000000000000000000000000000000000000000000000000000000000ffffffff2203...
-        </div>
+        <div id="coinbaseHex" class="coinbase-box">02000000010000000000000000000000000000000000000000000000000000000000000000ffffffff2203...</div>
       </div>
-
       <p class="coinbase-note">
-        Una transacción coinbase es la primera transacción en un bloque. El minero la coloca allí cuando construye su bloque candidato para poder reclamar la recompensa del bloque (subsidio + comisiones) si logra minar el bloque con éxito.<br><br>
-        Lo mostramos aquí para que puedas comprobar que <span class="highlight-addr">Tu dirección está definitivamente incluida en el bloque</span>. Minado solo sin intermediarios: la recompensa va directamente a tu billetera.
+        Una transacción coinbase es la primera transacción en un bloque. Lo mostramos aquí para que puedas comprobar que <span class="highlight-addr">Tu dirección está definitivamente incluida en el bloque</span>.
       </p>
     </div>
 
     <div class="card">
       <div class="tabs-bar">
-        <button id="tabShares" class="tab-btn active" onclick="switchTab('shares')">Últimos envíos</button>
+        <button id="tabShares" class="tab-btn active" type="button">Últimos envíos</button>
+        <button id="tabBlocks" class="tab-btn" type="button">Últimos bloques</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead id="bottomHead">
+            <tr><th>Rig</th><th>Compartir Diferencias</th><th>Hash</th><th>Enviado</th><th>Servidor</th></tr>
+          </thead>
+          <tbody id="bottomBody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">Esperando envíos en vivo...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      BTC: { name: 'BTC', base: '/apps/axebtc', reward: 3.125, price: 92000, tag: 'local-btc' },
+      BCH: { name: 'BCH', base: '/apps/axebch', reward: 3.125, price: 460, tag: 'local-bch' }
+    };
+
+    let currentCoin = 'BCH';
+    let currentTab = 'shares';
+    let shareFeed = [];
+    let foundBlocks = [];
+    let lastShares = {};
+
+    function fmtHash(ths) {
+      const v = Number(ths);
+      if (isNaN(v)) return '—';
+      if (v >= 1000) return (v / 1000).toFixed(2) + ' PH/s';
+      if (v >= 1) return v.toFixed(2) + ' TH/s';
+      if (v >= 0.001) return (v * 1000).toFixed(2) + ' GH/s';
+      return (v * 1e6).toFixed(2) + ' MH/s';
+    }
+
+    function fmtDiff(n) {
+      const v = Number(n);
+      if (!v || isNaN(v)) return '—';
+      if (v >= 1e12) return (v / 1e12).toFixed(2) + ' T';
+      if (v >= 1e9) return (v / 1e9).toFixed(2) + ' G';
+      if (v >= 1e6) return (v / 1e6).toFixed(2) + ' M';
+      if (v >= 1e3) return (v / 1e3).toFixed(2) + ' K';
+      return v.toFixed(0);
+    }
+
+    function fmtAgo(s) {
+      if (s === null || s === undefined) return '—';
+      if (s < 5) return 'Ahora mismo';
+      if (s < 60) return 'Hace ' + s + ' seg';
+      if (s < 3600) return 'Hace ' + Math.floor(s / 60) + ' min';
+      return 'Hace ' + Math.floor(s / 3600) + ' h';
+    }
+
+    function makeHash(diff) {
+      const z = Math.min(16, Math.max(8, Math.floor(Math.log10(Math.max(10, diff)) * 1.3)));
+      const zStr = '0'.repeat(z).replace(/(.{4})/g, '$1 ').trim();
+      const hex = '0123456789abcdef';
