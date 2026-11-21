@@ -56,7 +56,6 @@
     tr:last-child td { border-bottom: none; }
     .worker-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
     .dot-sm { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
-    .dot-sm.idle { background: var(--amber); }
     .shares-bad { color: var(--red); }
     .block-card { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
     .block-header { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
@@ -107,9 +106,9 @@
             <tr>
               <th>Trabajador</th>
               <th>Hashrate Actual</th>
-              <th>Hashrate Medio (1h)</th>
-              <th>Shares (OK / Err)</th>
-              <th>Dificultad</th>
+              <th>Estado Nodo</th>
+              <th>Shares / Workers</th>
+              <th>Dificultad Red</th>
               <th>Mejor Share</th>
               <th>Último Envío</th>
             </tr>
@@ -132,7 +131,7 @@
         <div id="blockFiat" class="reward-fiat">~ $—</div>
       </div>
       <div class="block-meta-grid">
-        <div class="meta-item"><label>Altura del Bloque</label><span id="blockHeightMid" class="badge-height">—</span></div>
+        <div class="meta-item"><label>Sincronización</label><span id="blockHeightMid" class="badge-height">—</span></div>
         <div class="meta-item"><label>Dificultad de Red</label><span id="netDiff">—</span></div>
         <div class="meta-item"><label>Mejor Share (Pool)</label><span id="poolBestShare">—</span></div>
         <div class="meta-item"><label>Última Actividad</label><span id="lastActivity">—</span></div>
@@ -170,41 +169,43 @@
     })();
 
     const CONFIG = {
-      BTC: { name: 'BTC', app: 'axebtc', reward: 3.125, price: 92000, tag: 'local-btc' },
-      BCH: { name: 'BCH', app: 'axebch', reward: 3.125, price: 460, tag: 'local-bch' }
+      BTC: { name: 'BTC', app: 'axebtc', reward: 3.125, price: 92000, tag: 'local-btc', workerName: 'nerd (BTC)' },
+      BCH: { name: 'BCH', app: 'axebch', reward: 3.125, price: 460, tag: 'local-bch', workerName: 'nerd (BCH)' }
     };
 
     let currentCoin = 'BCH';
     let currentTab = 'shares';
     let shareFeed = [];
-    let foundBlocks = [];
-    let lastShares = {};
 
-    function fmtHash(ths) {
-      const v = Number(ths);
-      if (isNaN(v)) return '—';
-      if (v >= 1000) return (v / 1000).toFixed(2) + ' PH/s';
-      if (v >= 1) return v.toFixed(2) + ' TH/s';
-      if (v >= 0.001) return (v * 1000).toFixed(2) + ' GH/s';
-      return (v * 1e6).toFixed(2) + ' MH/s';
+    function makeHash(diffStr) {
+      const z = String(diffStr).includes('G') ? 14 : (String(diffStr).includes('M') ? 12 : 10);
+      const zStr = '0'.repeat(z).replace(/(.{4})/g, '$1 ').trim();
+      const hex = '0123456789abcdef';
+      let t = '';
+      for (let i = 0; i < 16; i++) {
+        t += hex[Math.floor(Math.random() * 16)];
+        if ((i + 1) % 4 === 0 && i < 15) t += ' ';
+      }
+      return '<span class="hash-zeros">' + zStr + '</span> ' + t + ' ...';
     }
 
-    function fmtDiff(n) {
-      const v = Number(n);
-      if (!v || isNaN(v)) return '—';
-      if (v >= 1e12) return (v / 1e12).toFixed(2) + ' T';
-      if (v >= 1e9) return (v / 1e9).toFixed(2) + ' G';
-      if (v >= 1e6) return (v / 1e6).toFixed(2) + ' M';
-      if (v >= 1e3) return (v / 1e3).toFixed(2) + ' K';
-      return v.toFixed(0);
+    async function getJson(url) {
+      try {
+        const r = await fetch(url, { cache: 'no-store', credentials: 'include' });
+        if (r.ok) return await r.json();
+      } catch (e) {}
+      return null;
     }
 
-    function fmtAgo(s) {
-      if (s === null || s === undefined) return '—';
-      if (s < 5) return 'Ahora mismo';
-      if (s < 60) return 'Hace ' + s + ' seg';
-      if (s < 3600) return 'Hace ' + Math.floor(s / 60) + ' min';
-      return 'Hace ' + Math.floor(s / 3600) + ' h';
-    }
+    async function loadData() {
+      const c = CONFIG[currentCoin];
+      const [widgetsAll, poolWidget] = await Promise.all([
+        getJson(ORIGIN + '/api/v0/widgets'),
+        getJson(ORIGIN + '/apps/' + c.app + '/api/widget/pool')
+      ]);
 
-    function makeHash(diff) {
+      const dot = document.getElementById('connDot');
+      let hashrateStr = '—';
+      let workersCount = '1';
+      let bestShareStr = '—';
+      let netDiffStr = '—';
