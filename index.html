@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,393 +6,389 @@
   <title>letsmine.it — Solo Explorer</title>
   <style>
     :root {
-      --bg: #0b0d10;
-      --surface: #12151b;
-      --surface-2: #181c24;
-      --hex-bg: #080a0d;
-      --line: #1e232d;
-      --text: #f1f5f9;
-      --muted: #7c8596;
-      --green: #10b981;
-      --green-pill: rgba(16, 185, 129, 0.16);
+      --bg-body: #0f1115;
+      --bg-card: #161920;
+      --bg-card-alt: #1b1f28;
+      --bg-hex: #0b0d11;
+      --border: #252a34;
+      --text-main: #e6e8ec;
+      --text-muted: #8b92a2;
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.15);
       --amber: #f59e0b;
-      --amber-pill: rgba(245, 158, 11, 0.16);
+      --amber-dim: rgba(245, 158, 11, 0.15);
       --red: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       font-size: 13px;
-      line-height: 1.4;
-      padding: 12px 16px 32px;
+      line-height: 1.45;
+      padding: 16px;
     }
 
-    .page {
-      max-width: 1080px;
+    .container {
+      max-width: 1180px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
-    /* Barra superior minimalista estilo letsmine.it/miner/btc/1C... */
-    .top-nav {
+    .topbar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding-bottom: 12px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid var(--line);
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
     }
 
-    .crumb {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
+      gap: 10px;
     }
 
-    .crumb strong { color: var(--text); font-weight: 700; }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
+    .status-dot {
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
     }
-    .live-dot.ok {
+    .status-dot.online {
       background: var(--green);
       box-shadow: 0 0 8px var(--green);
     }
 
-    .coin-tabs {
-      display: flex;
-      gap: 6px;
+    .wallet-badge {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-hex);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
     }
 
-    .coin-tab {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 12px;
+    .coin-switch {
+      display: flex;
+      gap: 8px;
+    }
+
+    .coin-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 7px;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .coin-tab.active {
-      background: var(--amber-pill);
-      border-color: rgba(245, 158, 11, 0.4);
-      color: var(--amber);
+    .coin-btn.active {
+      background: var(--green-dim);
+      color: var(--green);
+      border-color: var(--green);
     }
 
-    /* 1. Lista superior de Workers (sin cabecera, limpia como en la foto) */
-    .workers-wrap {
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-wrap {
       width: 100%;
       overflow-x: auto;
-      margin-bottom: 22px;
     }
 
-    .workers-table {
+    table {
       width: 100%;
       border-collapse: collapse;
+      text-align: left;
       white-space: nowrap;
     }
 
-    .workers-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(30, 35, 45, 0.65);
+    th {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card-alt);
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
       font-variant-numeric: tabular-nums;
-      font-size: 13px;
     }
 
-    .workers-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
-    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-    .w-name {
+    .worker-cell {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
       font-weight: 600;
-      color: #e2e8f0;
     }
 
-    .w-dot {
+    .dot-sm {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: var(--green);
       flex-shrink: 0;
     }
-    .w-dot.off { background: var(--amber); }
+    .dot-sm.idle { background: var(--amber); }
 
-    .w-bold { font-weight: 600; color: #f8fafc; }
-    .w-dim { color: var(--muted); }
-    .w-bad { color: var(--red); }
+    .shares-bad { color: var(--red); }
 
-    /* 2. Sección central: Último bloque enviado a tu minero */
-    .candidate-box {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 10px;
+    .block-card {
       padding: 18px;
-      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .cand-header {
+    .block-header {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      color: #cbd5e1;
-      margin-bottom: 14px;
+      color: var(--text-muted);
     }
 
-    .height-tag {
-      background: var(--amber-pill);
+    .badge-height {
+      background: var(--amber-dim);
       color: var(--amber);
       border: 1px solid rgba(245, 158, 11, 0.35);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: ui-monospace, monospace;
       font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
       font-size: 12px;
-      padding: 1px 6px;
-      border-radius: 4px;
     }
 
-    .kicker {
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+    .reward-label {
+      font-size: 11px;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
     }
 
-    .reward-main {
+    .reward-value {
       font-size: 28px;
       font-weight: 800;
-      color: #ffffff;
-      margin-top: 2px;
       letter-spacing: -0.02em;
+      margin-top: 2px;
     }
 
-    .reward-sub {
+    .reward-fiat {
       font-size: 14px;
+      color: var(--text-muted);
       font-weight: 600;
-      color: #94a3b8;
-      margin-bottom: 16px;
     }
 
-    .stats-3col {
+    .block-meta-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 14px;
-      margin-bottom: 14px;
+      padding-top: 4px;
     }
 
-    .stat-val {
-      margin-top: 4px;
-      font-size: 13.5px;
+    .meta-item label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-item span {
       font-weight: 700;
-      color: #f1f5f9;
+      font-size: 14px;
     }
 
-    .bits-row {
-      margin-bottom: 14px;
-    }
-
-    .bits-code {
-      margin-top: 3px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12.5px;
-      color: #e2e8f0;
-    }
-
-    .coinbase-dump {
-      margin-top: 6px;
-      background: var(--hex-bg);
-      border: 1px solid var(--line);
-      border-radius: 6px;
+    .coinbase-box {
+      background: var(--bg-hex);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 12px;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11px;
-      color: #94a3b8;
+      font-size: 11.5px;
+      color: #cbd5e1;
       word-break: break-all;
       line-height: 1.55;
-      margin-bottom: 14px;
     }
 
-    .coinbase-desc {
+    .coinbase-note {
       font-size: 12px;
-      color: var(--muted);
-      line-height: 1.55;
+      color: var(--text-muted);
+      line-height: 1.5;
     }
 
-    .coinbase-desc p + p { margin-top: 10px; }
-
-    .addr-mark {
-      background: var(--amber-pill);
-      color: #fbbf24;
+    .highlight-addr {
+      background: var(--amber-dim);
+      color: var(--amber);
       padding: 1px 5px;
-      border-radius: 3px;
+      border-radius: 4px;
       font-weight: 600;
     }
 
-    /* 3. Sección inferior: Últimos envíos / Últimos bloques */
-    .feed-tabs {
+    .tabs-bar {
       display: flex;
-      gap: 20px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 6px;
+      gap: 18px;
+      padding: 12px 16px 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card-alt);
     }
 
-    .feed-tab {
+    .tab-btn {
       background: none;
       border: none;
-      color: var(--muted);
-      font-size: 13px;
+      color: var(--text-muted);
       font-weight: 600;
-      padding: 8px 2px;
+      font-size: 13px;
+      padding-bottom: 10px;
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
 
-    .feed-tab.active {
+    .tab-btn.active {
       color: var(--green);
       border-bottom-color: var(--green);
     }
 
-    .feed-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    .feed-table {
-      width: 100%;
-      border-collapse: collapse;
-      white-space: nowrap;
-      text-align: left;
-    }
-
-    .feed-table th {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      padding: 10px 10px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .feed-table td {
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(30, 35, 45, 0.55);
-      vertical-align: top;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .diff-chip {
-      display: inline-block;
-      background: var(--surface-2);
-      border: 1px solid var(--line);
-      color: #cbd5e1;
+    .pill-diff {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 5px;
       font-family: ui-monospace, monospace;
-      font-size: 11.5px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 4px;
+      font-size: 12px;
     }
 
-    .diff-chip.mega {
-      background: var(--green-pill);
-      border-color: rgba(16, 185, 129, 0.35);
+    .pill-diff.high {
+      background: var(--green-dim);
       color: var(--green);
+      border-color: rgba(34, 197, 94, 0.35);
     }
 
-    .hash-line {
+    .hash-mono {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 12px;
-      color: #94a3b8;
     }
 
-    .hash-lead {
+    .hash-zeros {
       color: var(--green);
       font-weight: 700;
     }
 
-    .rig-model {
+    .sub-agent {
       display: block;
       font-size: 11px;
-      color: var(--muted);
+      color: var(--text-muted);
       margin-top: 2px;
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <!-- Barra superior estilo letsmine.it/miner/btc/... -->
-    <div class="top-nav">
-      <div class="crumb">
-        <span id="connLight" class="live-dot"></span>
-        <span>letsmine.it / miner / <strong id="coinSlug">bch</strong> /</span>
-        <strong id="walletShort">conectando...</strong>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <span id="connDot" class="status-dot"></span>
+        <strong id="poolTitle">Solo Explorer • BCH</strong>
+        <span id="walletBadge" class="wallet-badge">Conectando con nodo local...</span>
       </div>
-      <div class="coin-tabs">
-        <button id="swBtc" class="coin-tab" onclick="selectNetwork('BTC')">BTC (:7890)</button>
-        <button id="swBch" class="coin-tab active" onclick="selectNetwork('BCH')">BCH (:4567)</button>
+      <div class="coin-switch">
+        <button id="btnBtc" class="coin-btn" onclick="switchCoin('BTC')">AxeBTC (:7890)</button>
+        <button id="btnBch" class="coin-btn active" onclick="switchCoin('BCH')">AxeBCH (:4567)</button>
       </div>
     </div>
 
-    <!-- 1. Tabla superior de Workers (sin cabecera, igual a la captura) -->
-    <div class="workers-wrap">
-      <table class="workers-table">
-        <tbody id="workersList">
-          <tr>
-            <td class="w-dim" style="padding:14px;">Cargando mineros conectados...</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Trabajador</th>
+              <th>Hashrate Actual</th>
+              <th>Hashrate Medio (1h)</th>
+              <th>Shares (OK / Err)</th>
+              <th>Dificultad</th>
+              <th>Mejor Share</th>
+              <th>Último Envío</th>
+            </tr>
+          </thead>
+          <tbody id="workersBody">
+            <tr>
+              <td colspan="7" style="text-align:center; color: var(--text-muted); padding: 20px;">
+                Cargando trabajadores desde el nodo...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- 2. Último bloque enviado a tu minero -->
-    <div class="candidate-box">
-      <div class="cand-header">
+    <div class="card block-card">
+      <div class="block-header">
         <span>⛏️ Último bloque enviado a tu minero:</span>
-        <span id="blkHeightTop" class="height-tag">—</span>
+        <span id="blockHeightTop" class="badge-height">—</span>
       </div>
 
-      <div class="kicker">BLOQUE DE RECOMPENSA</div>
-      <div id="blkReward" class="reward-main">3.125 BCH</div>
-      <div id="blkUsd" class="reward-sub">~ $1437.5</div>
+      <div>
+        <div class="reward-label">Bloque de Recompensa</div>
+        <div id="blockReward" class="reward-value">—</div>
+        <div id="blockFiat" class="reward-fiat">~ $—</div>
+      </div>
 
-      <div class="stats-3col">
-        <div>
-          <div class="kicker">ALTURA DEL BLOQUE</div>
-          <div class="stat-val"><span id="blkHeightMid" class="height-tag">—</span></div>
+      <div class="block-meta-grid">
+        <div class="meta-item">
+          <label>Altura del Bloque</label>
+          <span id="blockHeightMid" class="badge-height">—</span>
         </div>
-        <div>
-          <div class="kicker">RECUENTO DE TX</div>
-          <div id="blkTxCount" class="stat-val">—</div>
+        <div class="meta-item">
+          <label>Dificultad de Red</label>
+          <span id="netDiff">—</span>
         </div>
-        <div>
-          <div class="kicker">ENVIADO</div>
-          <div id="blkSentAgo" class="stat-val">Hace unos segundos</div>
+        <div class="meta-item">
+          <label>Mejor Share (Pool)</label>
+          <span id="poolBestShare">—</span>
+        </div>
+        <div class="meta-item">
+          <label>Última Actividad</label>
+          <span id="lastActivity">—</span>
         </div>
       </div>
 
-      <div class="bits-row">
-        <div class="kicker">BITS</div>
-        <div id="blkBits" class="bits-code">17021673</div>
+      <div>
+        <div class="reward-label" style="margin-bottom:6px;">Transacción de Coinbase (Plantilla Activa)</div>
+        <div id="coinbaseHex" class="coinbase-box">
+          02000000010000000000000000000000000000000000000000000000000000000000000000ffffffff2203...
+        </div>
       </div>
 
-      <div class="kicker">TRANSACCIÓN DE COINBASE</div>
-      <div id="cbHex" class="coinbase-dump">
-        02000000010000000000000000000000000000000000000000000000000000000000000000ffffffff2203...
-      </div>
+      <p class="coinbase-note">
+        Una transacción coinbase es la primera transacción en un bloque. El minero la coloca allí cuando construye su bloque candidato para poder reclamar la recompensa del bloque (subsidio + comisiones) si logra minar el bloque con éxito.<br><br>
+        Lo mostramos aquí para que puedas comprobar que <span class="highlight-addr">Tu dirección está definitivamente incluida en el bloque</span>. Minado solo sin intermediarios: la recompensa va directamente a tu billetera.
+      </p>
+    </div>
 
-      <div class="coinbase-desc">
-        <p>Una transacción coinbase es la primera transacción en un bloque. El minero la coloca allí cuando construye su bloque candidato para poder reclamar la recompensa del bloque (subsidio del bloque + comisiones) si logra minar el bloque con éxito.</p>
+    <div class="card">
+      <div class="tabs-bar">
+        <button id="tabShares" class="tab-btn active" onclick="switchTab('shares')">Últimos envíos</button>
